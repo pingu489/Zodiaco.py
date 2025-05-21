@@ -1,2 +1,2 @@
 # Zodiaco.py
-Script sencillo en python para saber tu horoscopo y elemento
+Script sencillo en python para saber tu signo del zodiaco y elemento
