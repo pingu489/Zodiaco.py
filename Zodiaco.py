@@ -16,6 +16,24 @@ signos = [
     ("Capricornio", (22, 12), (31, 12))
 ]
 
+# Alias de signos sin acentos y en minúsculas para que el usuario pueda escribir sin errores
+alias_signos = {
+    "aries": "Aries",
+    "tauro": "Tauro",
+    "geminis": "Géminis",
+    "géminis": "Géminis",
+    "cancer": "Cáncer",
+    "cáncer": "Cáncer",
+    "leo": "Leo",
+    "virgo": "Virgo",
+    "libra": "Libra",
+    "escorpio": "Escorpio",
+    "sagitario": "Sagitario",
+    "capricornio": "Capricornio",
+    "acuario": "Acuario",
+    "piscis": "Piscis"
+}
+
 # Lista de elementos con su signo
 elementos = {
     "Aries": "Fuego",
@@ -56,6 +74,21 @@ colores_elementos = {
     "Agua": "\033[94m"     # Azul
 }
 
+# Color ANSI
+def color_barra(porcentaje):
+    if porcentaje >= 75:
+        color = "\033[92m"  # Verde
+    elif porcentaje >= 60:
+        color = "\033[93m"  # Amarillo
+    else:
+        color = "\033[91m"  # Rojo
+    return color
+
+def mostrar_menu():
+    print("\n=== Menú del Zodiaco ===")
+    print("1. Saber tu signo del zodiaco")
+    print("2. Compatibilidad entre signos")
+    print("3. Salir")
 
 
 
@@ -67,24 +100,74 @@ def obtener_signo_zodiaco(dia, mes):
             return signo
     return "Fecha Invalida"
 
+# Bucle principal del programa
+while True:
+    mostrar_menu()
+    opcion = input("Selecciona una opción: ")
 
-# Pedir la fecha y mostrar el resultado
-fecha_input= input("Escribe tu fecha de nacimiento (dia/mes): ")
-dia_str, mes_str = fecha_input.split("/")
-dia = int(dia_str)
-mes = int(mes_str)
+    if opcion == "1":
+        print("\n=== Saber tu signo del zodiaco ===")
+        fecha_input = input("Escribe tu fecha de nacimiento (dia/mes): ")
+        dia_str, mes_str = fecha_input.split("/")
+        dia = int(dia_str)
+        mes = int(mes_str)
 
-signo = obtener_signo_zodiaco(dia, mes)
-elemento = elementos.get(signo, "Elemento no encontrado")
-descripcion = descripciones.get(signo, "Descripcion no encontrada")
-
+        signo = obtener_signo_zodiaco(dia, mes)
+        elemento = elementos.get(signo, "Elemento no encontrado")
+        descripcion = descripciones.get(signo, "Descripcion no encontrada")
 
 # Colores
-color = colores_elementos.get(elemento, "\033[0m")  # Color por defecto si no se encuentra
-reset_color = "\033[0m"   # Para volver al color por defecto
+        color = colores_elementos.get(elemento, "\033[0m")  # Color por defecto si no se encuentra
+        reset_color = "\033[0m"  
+        
+
+
+        print(f"{color}Tu signo del zodiaco es : {signo}")
+        print(f"Tu Elemento es : {elemento}")
+        print(f"Descripcion: {descripcion}{reset_color}")
+
+    elif opcion == "2":
+        print("=== Compatibilidad entre signos ===")
+        signo1 = input("Introduce el primer signo: ").lower()
+        signo2 = input("Introduce el segundo signo: ").lower()
+
+        signo1 = alias_signos.get(signo1)
+        signo2 = alias_signos.get(signo2)
+
+        if signo1 not in elementos or signo2 not in elementos:
+            print("Uno de los signos no es válido.")
+        else:
+            elem1 = elementos[signo1]
+            elem2 = elementos[signo2]
+
+            # Compatibilidades entre signos
+
+            compatibles = {
+                "Fuego": ["Fuego", "Aire"],
+                "Tierra": ["Tierra", "Agua"],
+                "Aire": ["Aire", "Fuego"],
+                "Agua": ["Agua", "Tierra"]
+            }
+            if elem2 in compatibles[elem1]:
+                porcentaje = 90 if elem1 == elem2 else 75
+            elif elem1 == elem2:
+                porcentaje = 60
+            else:
+                porcentaje = 40
+
+            # Barra visual
+            barra = "█" * (porcentaje // 10) + "-" * (10 - (porcentaje // 10))
+            barra_color = color_barra(porcentaje)
+            reset = "\033[0m"  # Para volver al color por defecto"
+
+            print(f"\nCompatibilidad entre {signo1} ({elem1}) y {signo2} ({elem2}):")
+            print(f"[{barra_color}]{barra} {porcentaje}%{reset}")
+
+    elif opcion == "3":
+        print("Adios adicto al zodiaco!")
+        break
+    else:
+        print("Opción no válida. Por favor, intenta de nuevo.")
 
 
 
-print(f"{color}Tu signo del zodiaco es : {signo}")
-print(f"Tu Elemento es : {elemento}")
-print(f"Descripcion: ´{descripcion}")
